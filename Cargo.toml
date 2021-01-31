@@ -8,10 +8,9 @@ edition = "2018"
 
 [dependencies]
 memchr = "2.3"
-rayon = "1.5"
-num_cpus = "1.13"
 spin = "0.7"
 bumpalo = "3.6"
 fxhash = "0.2"
 num-traits = "0.2"
-scoped_threadpool = "0.1"
+generic-array = "0.14"
+numeric-array = "0.5"

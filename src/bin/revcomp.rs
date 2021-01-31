@@ -5,7 +5,6 @@
 // Inspired by C++ #2 implementation Adam Kewley
 
 extern crate memchr;
-extern crate rayon;
 
 use memchr::memchr;
 use std::cmp;
@@ -162,19 +161,17 @@ impl<'a> Sequence<'a> {
         let block_bytes = BLOCK_ROWS * (LINE_LEN + 1);
         let trailing_len = content.len() % (LINE_LEN + 1);
 
-        rayon::scope(|scope| {
-            while content.len() >= block_bytes * 2 {
-                let (left, tmp) = content.split_at_mut(block_bytes);
-                let (inner, right) = tmp.split_at_mut(tmp.len() - block_bytes);
-                content = inner;
+        while content.len() >= block_bytes * 2 {
+            let (left, tmp) = content.split_at_mut(block_bytes);
+            let (inner, right) = tmp.split_at_mut(tmp.len() - block_bytes);
+            content = inner;
 
-                scope.spawn(move |_| reverse_complement_left_right(left, right, trailing_len));
-            }
+            reverse_complement_left_right(left, right, trailing_len);
+        }
 
-            let n = content.len() / 2;
-            let (left, right) = content.split_at_mut(n);
-            scope.spawn(move |_| reverse_complement_left_right(left, right, trailing_len));
-        });
+        let n = content.len() / 2;
+        let (left, right) = content.split_at_mut(n);
+        reverse_complement_left_right(left, right, trailing_len);
     }
 }
 

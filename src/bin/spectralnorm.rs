@@ -8,8 +8,8 @@
 // contributed by Cristi Cobzarenco (@cristicbz)
 // contributed by Andre Bogus
 
-extern crate rayon;
-use rayon::prelude::*;
+// extern crate rayon;
+// use rayon::prelude::*;
 use std::ops::*;
 
 #[derive(Clone, Copy)]
@@ -86,7 +86,7 @@ where
     F: Fn([usize; 2], [usize; 2]) -> F64x2 + Sync,
 {
     // Parallelize along the output vector, with each pair of slots as a parallelism unit.
-    out.par_iter_mut().enumerate().for_each(|(i, slot)| {
+    out.iter_mut().enumerate().for_each(|(i, slot)| {
         // We're computing everything in chunks of two so the indces of slot[0] and slot[1] are 2*i
         // and 2*i + 1.
         let i = 2 * i;

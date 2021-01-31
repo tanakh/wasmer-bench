@@ -10,10 +10,10 @@
 // modified by Ryohei Machida
 
 extern crate bumpalo;
-extern crate rayon;
+// extern crate rayon;
 
 use bumpalo::Bump;
-use rayon::prelude::*;
+// use rayon::prelude::*;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct Tree<'a> {
@@ -43,7 +43,7 @@ fn bottom_up_tree<'r>(arena: &'r Bump, depth: i32) -> &'r Tree<'r> {
 
 fn inner(depth: i32, iterations: i32) -> String {
     let chk: i32 = (0..iterations)
-        .into_par_iter()
+        .into_iter()
         .map(|_| {
             let arena = Bump::new();
             let a = bottom_up_tree(&arena, depth);
@@ -76,7 +76,7 @@ fn main() {
     let long_lived_tree = bottom_up_tree(&long_lived_arena, max_depth);
 
     let messages = (min_depth / 2..=max_depth / 2)
-        .into_par_iter()
+        .into_iter()
         .map(|half_depth| {
             let depth = half_depth * 2;
             let iterations = 1 << ((max_depth - depth + min_depth) as u32);

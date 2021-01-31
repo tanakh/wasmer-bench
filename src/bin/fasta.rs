@@ -7,14 +7,12 @@
 // contributed by Ryohei Machida
 
 extern crate core;
-extern crate num_cpus;
 extern crate spin;
 
 use spin::Mutex;
 use std::cmp;
 use std::io::{self, ErrorKind, Write};
 use std::sync::Arc;
-use std::thread;
 
 const LINE_LENGTH: usize = 60;
 const IM: u32 = 139968;
@@ -244,18 +242,7 @@ fn fasta_random_par(
     num_threads: u16,
 ) -> io::Result<()> {
     let stdout = Arc::new(Mutex::new(MyStdOut::new(num_threads)));
-    let mut threads = Vec::new();
-    for thread in 0..num_threads {
-        let wr = wr.clone();
-        let rng_clone = rng.clone();
-        let stdout_clone = stdout.clone();
-        threads.push(thread::spawn(move || {
-            fasta_random(thread, rng_clone, stdout_clone, wr);
-        }));
-    }
-    for thread_guard in threads {
-        thread_guard.join().unwrap();
-    }
+    fasta_random(0, rng, stdout, wr);
     Ok(())
 }
 
@@ -265,7 +252,7 @@ fn main() {
         .and_then(|s| s.into_string().ok())
         .and_then(|n| n.parse().ok())
         .unwrap_or(1000);
-    let num_threads: u16 = cmp::min(num_cpus::get() as u16, 2);
+    let num_threads: u16 = 1;
 
     // Homo sapiens alu
     {

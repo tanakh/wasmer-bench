@@ -7,15 +7,15 @@
 // -C target-cpu=native -C panic=abort
 
 extern crate fxhash;
-extern crate num_cpus;
+// extern crate num_cpus;
 extern crate num_traits;
-extern crate scoped_threadpool;
+// extern crate scoped_threadpool;
 
 use num_traits::FromPrimitive;
-use scoped_threadpool::Pool;
+// use scoped_threadpool::Pool;
 use std::cmp::Eq;
 use std::hash::Hash;
-use std::sync::mpsc;
+// use std::sync::mpsc;
 
 type Map<T> = fxhash::FxHashMap<T, u32>;
 
@@ -99,50 +99,50 @@ fn freq<T: Default + Hash + Eq + ShlXorMsk<T> + Copy>(s_vec: &[u8], len: usize) 
     h
 }
 
-fn freq_par<T: Default + Hash + Eq + ShlXorMsk<T> + Copy + Send>(
-    pool: &mut Pool,
-    s_vec: &[u8],
-    len: usize,
-) -> Map<T> {
-    if s_vec.len() < 1000 {
-        return freq(s_vec, len);
-    }
+// fn freq_par<T: Default + Hash + Eq + ShlXorMsk<T> + Copy + Send>(
+//     pool: &mut Pool,
+//     s_vec: &[u8],
+//     len: usize,
+// ) -> Map<T> {
+//     if s_vec.len() < 1000 {
+//         return freq(s_vec, len);
+//     }
 
-    let num_partitions = pool.thread_count() as usize;
-    let (tx, rx) = mpsc::channel();
+//     let num_partitions = pool.thread_count() as usize;
+//     let (tx, rx) = mpsc::channel();
 
-    pool.scoped(|scope| {
-        for i in 0..num_partitions {
-            // split s_vec into partitions
-            let start = s_vec.len() * i / num_partitions;
-            let end = if i != num_partitions - 1 {
-                s_vec.len() * (i + 1) / num_partitions + len - 1
-            } else {
-                s_vec.len()
-            };
-            let sub_vec = &s_vec[start..end];
-            let tx = tx.clone();
+//     pool.scoped(|scope| {
+//         for i in 0..num_partitions {
+//             // split s_vec into partitions
+//             let start = s_vec.len() * i / num_partitions;
+//             let end = if i != num_partitions - 1 {
+//                 s_vec.len() * (i + 1) / num_partitions + len - 1
+//             } else {
+//                 s_vec.len()
+//             };
+//             let sub_vec = &s_vec[start..end];
+//             let tx = tx.clone();
 
-            scope.execute(move || {
-                tx.send(freq::<T>(sub_vec, len)).unwrap();
-            });
-        }
-    });
+//             scope.execute(move || {
+//                 tx.send(freq::<T>(sub_vec, len)).unwrap();
+//             });
+//         }
+//     });
 
-    {
-        let mut merged = rx.recv().unwrap();
+//     {
+//         let mut merged = rx.recv().unwrap();
 
-        // merge results
-        for _ in 1..num_partitions {
-            let map = rx.recv().unwrap();
-            for (k, v) in map {
-                *merged.entry(k).or_insert(0) += v;
-            }
-        }
+//         // merge results
+//         for _ in 1..num_partitions {
+//             let map = rx.recv().unwrap();
+//             for (k, v) in map {
+//                 *merged.entry(k).or_insert(0) += v;
+//             }
+//         }
 
-        merged
-    }
-}
+//         merged
+//     }
+// }
 
 fn get_seq<R: std::io::BufRead>(mut r: R, key: &[u8]) -> Vec<u8> {
     let mut res = Vec::with_capacity(65536);
@@ -173,27 +173,26 @@ fn get_seq<R: std::io::BufRead>(mut r: R, key: &[u8]) -> Vec<u8> {
 
 pub fn calc<R: std::io::BufRead>(r: R) {
     let s_vec = get_seq(r, b">THREE");
-    let mut pool = Pool::new(num_cpus::get() as u32);
 
-    let f1 = freq_par(&mut pool, &s_vec, 1);
+    let f1 = freq(&s_vec, 1);
     print_stat(f1, 1);
 
-    let f2 = freq_par(&mut pool, &s_vec, 2);
+    let f2 = freq(&s_vec, 2);
     print_stat(f2, 2);
 
-    let f3 = freq_par::<u8>(&mut pool, &s_vec, 3);
+    let f3 = freq::<u8>(&s_vec, 3);
     print(f3, "GGT");
 
-    let f4 = freq_par::<u8>(&mut pool, &s_vec, 4);
+    let f4 = freq::<u8>(&s_vec, 4);
     print(f4, "GGTA");
 
-    let f5 = freq_par::<u16>(&mut pool, &s_vec, 6);
+    let f5 = freq::<u16>(&s_vec, 6);
     print(f5, "GGTATT");
 
-    let f6 = freq_par::<u32>(&mut pool, &s_vec, 12);
+    let f6 = freq::<u32>(&s_vec, 12);
     print(f6, "GGTATTTTAATT");
 
-    let f7 = freq_par::<u64>(&mut pool, &s_vec, 18);
+    let f7 = freq::<u64>(&s_vec, 18);
     print(f7, "GGTATTTTAATTTATAGT");
 }
 

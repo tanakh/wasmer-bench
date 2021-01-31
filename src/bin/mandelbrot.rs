@@ -9,11 +9,11 @@
 extern crate generic_array;
 extern crate num_traits;
 extern crate numeric_array;
-extern crate rayon;
+// extern crate rayon;
 
 use generic_array::typenum::consts::U8;
 use numeric_array::NumericArray as Arr;
-use rayon::prelude::*;
+// use rayon::prelude::*;
 use std::io::Write;
 
 // [f64;8]
@@ -72,7 +72,7 @@ fn main() {
     println!("P4\n{} {}", size, size);
 
     let mut rows = vec![0; size * size / VLEN];
-    rows.par_chunks_mut(size / VLEN)
+    rows.chunks_mut(size / VLEN)
         .enumerate()
         .for_each(|(y, out)| {
             let ci = numeric_array::NumericConstant(y as f64 * inv - 1.);

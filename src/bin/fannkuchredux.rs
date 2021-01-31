@@ -8,9 +8,9 @@
 // Heiner Marxen, Hongwei Xi, and The Anh Tran and also the Java program by Oleg
 // Mazurov.
 
-extern crate rayon;
+// extern crate rayon;
 
-use rayon::prelude::*;
+// use rayon::prelude::*;
 use std::mem::replace;
 
 // This value controls how many blocks the workload is broken up into (as long
@@ -51,7 +51,7 @@ fn main() {
 
     // Iterate over each block.
     let (checksum, max_flip_count) = (0..block_count)
-        .into_par_iter()
+        .into_iter()
         .map(|bn| {
             let initial_permutation_index = bn * block_size;
 
@@ -158,10 +158,7 @@ fn main() {
             }
             (checksum, max_flip_count)
         })
-        .reduce(
-            || (0, 0),
-            |(cs1, mf1), (cs2, mf2)| (cs1 + cs2, mf1.max(mf2)),
-        );
+        .fold((0, 0), |(cs1, mf1), (cs2, mf2)| (cs1 + cs2, mf1.max(mf2)));
 
     // Output the results to stdout.
     println!("{}", checksum);
