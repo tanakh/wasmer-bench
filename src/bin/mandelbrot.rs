@@ -9,12 +9,12 @@
 extern crate generic_array;
 extern crate num_traits;
 extern crate numeric_array;
-// extern crate rayon;
 
 use generic_array::typenum::consts::U8;
 use numeric_array::NumericArray as Arr;
-// use rayon::prelude::*;
 use std::io::Write;
+
+// use rayon::prelude::*;
 
 // [f64;8]
 type Vecf64 = Arr<f64, U8>;

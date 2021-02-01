@@ -1,4 +1,5 @@
 WASI_DIR := "target/wasm32-wasi/release"
+export RUSTFLAGS := "-C opt-level=3 -C codegen-units=1"
 
 build-wasi BIN:
     cargo wasi build --release --bin {{BIN}}
@@ -9,17 +10,18 @@ make-input:
     cargo run --release --bin fasta 5000000   > input5000000.fasta
 
 bench-all:
-    bench-nbody
-    bench-fannkuchredux
-    bench-spectralnorm
-    bench-mandelbrot
-    bench-fasta
-    bench-revcomp
-    bench-binarytrees
-    bench-knucleotide
+    just bench-revcomp
+    just bench-binarytrees
+    just bench-knucleotide
+    just bench-mandelbrot
+    just bench-nbody
+    just bench-fannkuchredux
+    just bench-spectralnorm
+    just bench-fasta
 
-# bench-pidigits
-# bench-regexredux
+# not working
+#   just bench-pidigits
+#   just bench-regexredux
 
 bench-nbody:
     just bench nbody 50000000
@@ -54,14 +56,15 @@ bench-knucleotide:
 bench BIN ARG INPUT="/dev/null":
     just build-wasi {{BIN}}
 
-    just hf {{BIN}}-native            cargo run --release --bin {{BIN}} {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmtime          wasmtime run --enable-all {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-default    wasmer {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-jit        wasmer --jit {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-cranelift  wasmer --cranelift {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-llvm       wasmer --llvm {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-native     wasmer --native {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
-    just hf {{BIN}}-wasmer-singlepass wasmer --singlepass {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
+    just hf {{BIN}}-native            cargo run --release --bin {{BIN}} {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmtime          wasmtime run --enable-all {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmer-default    wasmer {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmer-jit        wasmer --jit {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmer-cranelift  wasmer --cranelift {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmer-llvm       wasmer --llvm {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+    just hf {{BIN}}-wasmer-native     wasmer --native {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}} \> /dev/null
+
+#    just hf {{BIN}}-wasmer-singlepass wasmer --singlepass {{WASI_DIR}}/{{BIN}}.wasm {{ARG}} \< {{INPUT}}
 
 hf NAME +ARGS:
     hyperfine -w 3  \
