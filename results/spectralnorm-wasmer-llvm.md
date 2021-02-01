@@ -1,3 +1,3 @@
 | Command | Mean [s] | Min [s] | Max [s] | Relative |
 |:---|---:|---:|---:|---:|
-| `wasmer --llvm target/wasm32-wasi/release/spectralnorm.wasm 5500 < /dev/null > /dev/null` | 1.578 ± 0.001 | 1.577 | 1.580 | 1.00 |
+| `cd rust && wasmer --llvm target/wasm32-wasi/release/spectralnorm.wasm 5500 < /dev/null > /dev/null` | 1.581 ± 0.002 | 1.578 | 1.585 | 1.00 |

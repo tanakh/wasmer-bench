@@ -1,3 +1,3 @@
 | Command | Mean [s] | Min [s] | Max [s] | Relative |
 |:---|---:|---:|---:|---:|
-| `wasmtime run --enable-all target/wasm32-wasi/release/fasta.wasm 25000000 < /dev/null > /dev/null` | 6.277 ± 0.052 | 6.252 | 6.423 | 1.00 |
+| `cd rust && wasmtime run --enable-all target/wasm32-wasi/release/fasta.wasm 25000000 < /dev/null > /dev/null` | 6.272 ± 0.023 | 6.256 | 6.336 | 1.00 |

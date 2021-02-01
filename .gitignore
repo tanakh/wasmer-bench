@@ -1,3 +1,4 @@
-/target
+/rust/target
 *.fasta
 *.gcc_run
+*.class

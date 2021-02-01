@@ -1,3 +1,3 @@
 | Command | Mean [s] | Min [s] | Max [s] | Relative |
 |:---|---:|---:|---:|---:|
-| `cargo run --release --bin spectralnorm 5500 < /dev/null > /dev/null` | 1.305 ± 0.005 | 1.302 | 1.317 | 1.00 |
+| `cd rust && cargo run --release --bin spectralnorm 5500 < /dev/null > /dev/null` | 1.339 ± 0.030 | 1.311 | 1.384 | 1.00 |
