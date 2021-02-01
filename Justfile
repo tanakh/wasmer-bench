@@ -73,3 +73,9 @@ bench-java-all:
 bench-java BIN ARG INPUT="/dev/null":
     javac -cp java:/usr/share/java/fastutil.jar java/{{BIN}}.java
     just hf {{BIN}}-java java -cp java:/usr/share/java/fastutil.jar -XX:ActiveProcessorCount=1 {{BIN}} {{ARG}} \< {{INPUT}} \> /dev/null
+
+make-graph:
+    cargo run
+    gnuplot plot.txt
+    gnuplot plot-lim.txt
+    gnuplot plot-gm.txt
