@@ -1,0 +1,13 @@
+set terminal png enhanced size 1200,800
+set output 'gm.png'
+
+set colorsequence classic
+
+set style data histogram
+set style histogram cluster gap 1
+
+set style fill solid border rgb "black"
+set auto x
+set yrange [0:*]
+
+plot 'geomean.dat' using 2:xtic(1) title col

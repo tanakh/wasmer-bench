@@ -1,0 +1,18 @@
+set terminal png enhanced size 1200,800
+set output 'wo-sp.png'
+
+set colorsequence classic
+
+set style data histogram
+set style histogram cluster gap 1
+
+set style fill solid border rgb "black"
+set auto x
+set yrange [0:*]
+
+plot 'info.dat' using 2:xtic(1) title col, \
+        '' using 3:xtic(1) title col, \
+        '' using 4:xtic(1) title col, \
+        '' using 6:xtic(1) title col, \
+        '' using 7:xtic(1) title col, \
+        '' using 8:xtic(1) title col

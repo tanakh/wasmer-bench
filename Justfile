@@ -75,7 +75,8 @@ bench-java BIN ARG INPUT="/dev/null":
     just hf {{BIN}}-java java -cp java:/usr/share/java/fastutil.jar -XX:ActiveProcessorCount=1 {{BIN}} {{ARG}} \< {{INPUT}} \> /dev/null
 
 make-graph:
-    cargo run
+    # cargo run
     gnuplot plot.txt
+    gnuplot plot-wo-sp.txt
     gnuplot plot-lim.txt
     gnuplot plot-gm.txt

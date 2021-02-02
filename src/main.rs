@@ -16,7 +16,7 @@ static IMPLS: &[&str] = &[
     "native",
     "wasmer-llvm",
     "wasmer-cranelift",
-    // "wasmer-singlepass",
+    "wasmer-singlepass",
     "wasmtime",
     "c",
     "java",
